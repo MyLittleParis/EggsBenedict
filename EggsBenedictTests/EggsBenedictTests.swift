@@ -12,34 +12,34 @@ import XCTest
 class EggsBenedictTests: XCTestCase {
     
     func testInitSharingFlowIGPhoto() {
-        let sharingFlow = SharingFlow(type: .IGPhoto)
+        let sharingFlow = SharingFlow(type: .igPhoto)
         XCTAssertEqual(sharingFlow.filenameExtension, ".ig")
         XCTAssertEqual(sharingFlow.UTI,"com.instagram.photo")
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        XCTAssertEqual(sharingFlow.imagePath, temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.ig"))
+        XCTAssertEqual(sharingFlow.imagePath, temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.ig"))
     }
     
     func testInitSharingFlowIGOExclusivegram() {
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         XCTAssertEqual(sharingFlow.filenameExtension,".igo")
         XCTAssertEqual(sharingFlow.UTI, "com.instagram.exclusivegram")
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        XCTAssertEqual(sharingFlow.imagePath, temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.igo"))
+        XCTAssertEqual(sharingFlow.imagePath, temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.igo"))
     }
     
     func testHasInstagramApp() {
-        let result = UIApplication.sharedApplication().canOpenURL(NSURL(string: "instagram://")!)
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let result = UIApplication.shared.canOpenURL(URL(string: "instagram://")!)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         XCTAssertEqual(sharingFlow.hasInstagramApp, result)
     }
     
     func testWriteTemporaryImageIGPhoto() {
-        guard let image = UIImage(named: "EggsBenedict.jpg", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil) else {
+        guard let image = UIImage(named: "EggsBenedict.jpg", in: Bundle(for: type(of: self)), compatibleWith: nil) else {
             XCTFail("Image is nil.")
             return
         }
         
-        let sharingFlow = SharingFlow(type: .IGPhoto)
+        let sharingFlow = SharingFlow(type: .igPhoto)
         do {
             try sharingFlow.writeTemporaryImage(image)
         } catch let error as NSError {
@@ -47,17 +47,17 @@ class EggsBenedictTests: XCTestCase {
             return
         }
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        let testImagePath = temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.ig")
-        XCTAssertTrue(NSFileManager.defaultManager().fileExistsAtPath(testImagePath), testImagePath)
+        let testImagePath = temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.ig")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: testImagePath), testImagePath)
     }
     
     func testWriteTemporaryImageIGOExclusivegram() {
-        guard let image = UIImage(named: "EggsBenedict.jpg", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil) else {
+        guard let image = UIImage(named: "EggsBenedict.jpg", in: Bundle(for: type(of: self)), compatibleWith: nil) else {
             XCTFail("Image is nil.")
             return
         }
         
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         do {
             try sharingFlow.writeTemporaryImage(image)
         } catch let error as NSError {
@@ -65,16 +65,16 @@ class EggsBenedictTests: XCTestCase {
             return
         }
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        let testImagePath = temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.igo")
-        XCTAssertTrue(NSFileManager.defaultManager().fileExistsAtPath(testImagePath), testImagePath)
+        let testImagePath = temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.igo")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: testImagePath), testImagePath)
     }
     
     func testWriteTemporaryImageNil() {
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         do {
             try sharingFlow.writeTemporaryImage(UIImage())
         } catch let sharingFlowError as SharingFlowError {
-            XCTAssertEqual(sharingFlowError, SharingFlowError.ImageJPEGRepresentationFailed)
+            XCTAssertEqual(sharingFlowError, SharingFlowError.imageJPEGRepresentationFailed)
             return
         } catch let error as NSError {
             XCTFail(error.debugDescription)
@@ -84,14 +84,14 @@ class EggsBenedictTests: XCTestCase {
     }
     
     func testPresentOpenInMenuWithImageInViewCompletion() {
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         sharingFlow.presentOpenInMenuWithImage(UIImage(), inView: UIView()) { (sharingFlowResult) -> Void in
             switch sharingFlowResult {
-            case .Success(_):
+            case .success(_):
                 XCTFail("An unknown error occurred.")
-            case let .Failure(_, sharingFlowError as SharingFlowError):
-                XCTAssertEqual(sharingFlowError, SharingFlowError.NotFoundInstagramApp)
-            case let .Failure(_, error as NSError):
+            case let .failure(_, sharingFlowError as SharingFlowError):
+                XCTAssertEqual(sharingFlowError, SharingFlowError.notFoundInstagramApp)
+            case let .failure(_, error as NSError):
                 XCTFail(error.debugDescription)
             default:
                 XCTFail("An unknown error occurred.")
@@ -100,14 +100,14 @@ class EggsBenedictTests: XCTestCase {
     }
     
     func testPresentOpenInMenuWithImageInViewDocumentInteractionDelegateCompletion() {
-        let sharingFlow = SharingFlow(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow(type: .igoExclusivegram)
         sharingFlow.presentOpenInMenuWithImage(UIImage(), inView: UIView(), documentInteractionDelegate: nil) { (sharingFlowResult) -> Void in
             switch sharingFlowResult {
-            case .Success(_):
+            case .success(_):
                 XCTFail()
-            case let .Failure(_, sharingFlowError as SharingFlowError):
-                XCTAssertEqual(sharingFlowError, SharingFlowError.NotFoundInstagramApp)
-            case let .Failure(_, error as NSError):
+            case let .failure(_, sharingFlowError as SharingFlowError):
+                XCTAssertEqual(sharingFlowError, SharingFlowError.notFoundInstagramApp)
+            case let .failure(_, error as NSError):
                 XCTFail(error.debugDescription)
             default:
                 XCTFail("An unknown error occurred.")
@@ -116,75 +116,75 @@ class EggsBenedictTests: XCTestCase {
     }
     
     func testRemoveTemporaryImageIG() {
-        guard let image = UIImage(named: "EggsBenedict.jpg", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil) else {
+        guard let image = UIImage(named: "EggsBenedict.jpg", in: Bundle(for: type(of: self)), compatibleWith: nil) else {
             XCTFail("Image is nil.")
             return
         }
         
         guard let imageData = UIImageJPEGRepresentation(image, 1.0) else {
-            XCTFail(SharingFlowError.ImageJPEGRepresentationFailed.debugDescription)
+            XCTFail(SharingFlowError.imageJPEGRepresentationFailed.debugDescription)
             return
         }
         
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        let testImagePath = temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.ig")
-        guard imageData.writeToFile(testImagePath, atomically: true) else {
-            XCTFail(SharingFlowError.WriteToFileFailed.debugDescription)
+        let testImagePath = temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.ig")
+        guard (try? imageData.write(to: URL(fileURLWithPath: testImagePath), options: [.atomic])) != nil else {
+            XCTFail(SharingFlowError.writeToFileFailed.debugDescription)
             return
         }
         
-        let sharingFlow = SharingFlow.init(type: .IGPhoto)
+        let sharingFlow = SharingFlow.init(type: .igPhoto)
         sharingFlow.removeTemporaryImage { (sharingFlowResult) -> Void in
-            XCTAssertFalse(NSFileManager.defaultManager().fileExistsAtPath(testImagePath), testImagePath)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: testImagePath), testImagePath)
         }
     }
     
     func testRemoveTemporaryImageIGO() {
-        guard let image = UIImage(named: "EggsBenedict.jpg", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil) else {
+        guard let image = UIImage(named: "EggsBenedict.jpg", in: Bundle(for: type(of: self)), compatibleWith: nil) else {
             XCTFail("Image is nil.")
             return
         }
         
         guard let imageData = UIImageJPEGRepresentation(image, 1.0) else {
-            XCTFail(SharingFlowError.ImageJPEGRepresentationFailed.debugDescription)
+            XCTFail(SharingFlowError.imageJPEGRepresentationFailed.debugDescription)
             return
         }
         
         let temporaryDirectory = NSTemporaryDirectory() as NSString
-        let testImagePath = temporaryDirectory.stringByAppendingPathComponent("jpmarthaeggsbenedict.igo")
-        guard imageData.writeToFile(testImagePath, atomically: true) else {
-            XCTFail(SharingFlowError.WriteToFileFailed.debugDescription)
+        let testImagePath = temporaryDirectory.appendingPathComponent("jpmarthaeggsbenedict.igo")
+        guard (try? imageData.write(to: URL(fileURLWithPath: testImagePath), options: [.atomic])) != nil else {
+            XCTFail(SharingFlowError.writeToFileFailed.debugDescription)
             return
         }
         
-        let sharingFlow = SharingFlow.init(type: .IGOExclusivegram)
+        let sharingFlow = SharingFlow.init(type: .igoExclusivegram)
         sharingFlow.removeTemporaryImage { (sharingFlowResult) -> Void in
-            XCTAssertFalse(NSFileManager.defaultManager().fileExistsAtPath(testImagePath), testImagePath)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: testImagePath), testImagePath)
         }
     }
     
     func testSharingFlowErrorDebugDescriptionNotFoundInstagramApp() {
-        XCTAssertEqual(SharingFlowError.NotFoundInstagramApp.debugDescription,
+        XCTAssertEqual(SharingFlowError.notFoundInstagramApp.debugDescription,
             "Not found Instagram app.")
     }
     
     func testSharingFlowErrorDebugDescriptionUTIisEmpty() {
-        XCTAssertEqual(SharingFlowError.UTIisEmpty.debugDescription,
+        XCTAssertEqual(SharingFlowError.utIisEmpty.debugDescription,
             "UTI is empty.")
     }
     
     func testSharingFlowErrorDebugDescriptionImageJPEGRepresentationFailed() {
-        XCTAssertEqual(SharingFlowError.ImageJPEGRepresentationFailed.debugDescription,
+        XCTAssertEqual(SharingFlowError.imageJPEGRepresentationFailed.debugDescription,
             "\"UIImageJPEGRepresentation::\" method failed.")
     }
     
     func testSharingFlowErrorDebugDescriptionWriteToFileFailed() {
-        XCTAssertEqual(SharingFlowError.WriteToFileFailed.debugDescription,
+        XCTAssertEqual(SharingFlowError.writeToFileFailed.debugDescription,
             "\"writeToFile:atomically:\" method failed.")
     }
     
     func testSharingFlowErrorDebugDescriptionImagePathIsEmpty() {
-        XCTAssertEqual(SharingFlowError.ImagePathIsEmpty.debugDescription,
+        XCTAssertEqual(SharingFlowError.imagePathIsEmpty.debugDescription,
             "ImagePath is empty.")
     }
 }
