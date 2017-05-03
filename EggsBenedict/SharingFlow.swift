@@ -97,7 +97,7 @@ public final class SharingFlow: InstagramSharingFlow {
       - completion: The block to execute after the presenting menu. You may specify `nil` for this parameter.
     */
     public func presentOpenInMenuWithImage(_ image: UIImage!, inView view: UIView!, documentInteractionDelegate delegate: UIDocumentInteractionControllerDelegate?, completion: ((_ sharingFlowResult: SharingFlowResult) -> Void)?) {
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
+        DispatchQueue.global(qos: .default).async(execute: {
             guard self.hasInstagramApp else {
                 completion?(.failure(self.imagePath, SharingFlowError.notFoundInstagramApp))
                 return
@@ -149,7 +149,7 @@ public final class SharingFlow: InstagramSharingFlow {
     - seealso: [SharingFlow Class Reference](https://github.com/JPMartha/EggsBenedict/blob/develop/Documentation/SharingFlowClassReference.md)
     */
     public func removeTemporaryImage(completionHandler completion: ((_ sharingFlowResult: SharingFlowResult) -> Void)?) {
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
+        DispatchQueue.global(qos:.default).async(execute: {
             guard !self.imagePath.isEmpty else {
                 completion?(.failure(self.imagePath, SharingFlowError.imagePathIsEmpty))
                 return
